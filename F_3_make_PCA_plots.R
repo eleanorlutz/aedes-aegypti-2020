@@ -1,0 +1,97 @@
+library(dplyr)
+library(mice)
+library(VIM)
+library(missMDA)
+library(FactoMineR)
+library(factoextra)
+library(vegan)
+library(pastecs)
+library(simba)
+library(cluster)
+library(ecodist)
+library(gclus)
+library(stringr)
+library(viridis)
+
+setwd("/Users/ghost/Documents/Gitrepos/aedes-aegypti-2020/data")
+source("./stats/biostats.R")
+source("./stats/coldiss.R")
+
+# Read in the data
+lardata <- read.csv('./trajectories/cleaned_animal_analyses_acclimation.csv',
+                    header=TRUE)
+
+# Examine the structure of the dataset
+lardata <- subset(lardata, select = -c(length_mm))
+larspecies <- lardata
+lardata <- subset(lardata, select=-c(treatment_odor, species, animal_ID, sex, dead))
+
+# Standardize data
+sp.data.tra<-decostand(lardata, method='standardize', margin='column', plot=F)
+
+# Calculate the PCA
+lar.pca<-prcomp(sp.data.tra, scale=FALSE)
+summary(lar.pca)
+
+# See which PCA axes are significantly important
+# screeplot(lar.pca, bstick=TRUE)
+ordi.monte(sp.data.tra, ord='pca', dim=5, plot=F)
+
+# FIGURE 3B
+# Visualize the PCA plot vectors
+par(pty="s")
+fviz_pca_var(lar.pca, # col.var="contrib", 
+             col.var = "#ffa500",
+             ylim=c(-1,1),
+             xlim=c(-1,1),
+             # gradient.cols=c('#a8caf6', '#042f66'), 
+             repel=TRUE)
+# The contributions of variables in accounting for the variability in a given principal component are expressed in percentage.
+fviz_contrib(lar.pca, choice="var", axes=1:2)
+# Print the variable contributions:
+var <- get_pca_var(lar.pca)
+var$contrib
+
+# FIGURE 3A
+# Plot the data points on the PC axis
+larspecies$pchs <- ifelse(larspecies$species=='Aedes aegypti', 19, 
+                          ifelse(larspecies$species=='Aedes albopictus', 4, 
+                                 ifelse(larspecies$species=='Anopheles arabiensis', 15, 
+                                        ifelse(larspecies$species=='Anopheles gambiae', 18, 
+                                               ifelse(larspecies$species=='Culex tarsalis', 3, 
+                                                    ifelse(larspecies$species=='Culex quinquefasciatus', 17, 0))))))
+p <- fviz_pca_biplot(lar.pca, geom="point", pch=larspecies$pchs, 
+                invisible=c("quali", "var"),
+                habillage=larspecies$species,
+                ylim=c(-7.2,7.2),
+                xlim=c(-6,6),
+                palette=c('#224099','#96509f','#d84b27','#e69f00','#009e73', '#47c4d7'))
+p + theme(legend.position = "none")
+
+# Show animal ID labels for reference on Figure 3
+fviz_pca_biplot(lar.pca,
+                invisible=c("quali", "var"),
+                ylim=c(-7.2,7.2),
+                xlim=c(-6,6),
+                labelsize=2,
+                pch=larspecies$pchs, 
+                habillage=larspecies$species,
+                palette=c('#224099','#96509f','#d84b27','#e69f00','#009e73', '#47c4d7'))
+
+# PLOT THE EUCLIDEAN DISTANCE MATRIX
+# Read in the data
+lardata <- read.csv('./trajectories/cleaned_animal_analyses_acclimation.csv',
+                    header=TRUE)
+# Order by species
+lardata <- lardata[order(lardata$species, lardata$animal_ID),]
+larspecies <- lardata
+lardata <- subset(lardata, select=-c(treatment_odor, species, animal_ID, sex, dead, length_mm))
+
+# Standardize data
+sp.data.tra<-decostand(lardata, method='standardize', margin='column', plot=F)
+# R code to verify the data was processed the same
+sp.dist <- vegdist(sp.data.tra, method='euclidean')
+dist.matrix <- as.matrix(sp.dist)
+write.table(dist.matrix, './stats/distance_matrix.csv', row.names=FALSE)
+# sp.color <- dmat.color(sp.dist, byrank=FALSE, magma(20))
+# plotcolors(sp.color)

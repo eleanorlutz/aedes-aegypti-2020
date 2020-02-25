@@ -1,0 +1,19 @@
+species,treatment,alive,dead
+Aedes aegypti,water,24,0
+Aedes aegypti,quinine,25,1
+Aedes aegypti,food,21,1
+Aedes albopictus,water,23,1
+Aedes albopictus,quinine,26,4
+Aedes albopictus,food,22,2
+Anopheles arabiensis,water,29,13
+Anopheles arabiensis,quinine,36,16
+Anopheles arabiensis,food,28,21
+Anopheles gambiae,water,38,1
+Anopheles gambiae,quinine,37,1
+Anopheles gambiae,food,33,3
+Culex quinquefasciatus,water,37,3
+Culex quinquefasciatus,quinine,40,10
+Culex quinquefasciatus,food,33,8
+Culex tarsalis,water,18,8
+Culex tarsalis,quinine,15,11
+Culex tarsalis,food,20,12

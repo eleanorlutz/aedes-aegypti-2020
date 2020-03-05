@@ -13,6 +13,10 @@ Code used to analyze and visualize data for this manuscript is provided in this 
 
 This paper was originally submitted to the Journal of Experimental Biology on January 4, 2020. Comments from two anonymous reviewers were received on February 11, 2020, and the manuscript was revised and resubmitted on February 21, 2020. Both versions are available in the `manuscript` folder.
 
+## Data Availability
+All data, code, and original video files for the behavior section of this manuscript is provided free at this [Mendeley Data repository](https://data.mendeley.com/datasets/cn9xjcfyw2/1).
+
+## Repository Contents
 ### Data Analysis Code:
 #### 0_inspect_data.ipynb
 - Output number of live and dead animals for each species and treatment
